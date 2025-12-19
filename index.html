@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en"><link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baki Hanma VS Kengan Ashura</title>
+    <style>
+        /* PUNCH SHAKE EFFECT */
+@keyframes punchShake {
+  0%   { transform: translate(0,0) scale(1); }
+  20%  { transform: translate(-10px, 5px) scale(1.05); }
+  40%  { transform: translate(10px, -5px) scale(1.1); }
+  60%  { transform: translate(-6px, 4px) scale(1.05); }
+  80%  { transform: translate(6px, -4px) scale(1); }
+  100% { transform: translate(0,0) scale(1); }
+}
+
+/* WHITE FLASH IMPACT */
+@keyframes impactFlash {
+  0% { background: black; }
+  50% { background: white; }
+  100% { background: black; }
+}
+
+/* APPLY PUNCH */
+#loader.punch {
+  animation: impactFlash 0.15s ease;
+}
+
+#loader.punch img {
+  animation: punchShake 0.3s ease;
+}
+        /* FULLSCREEN LOADER */
+#loader {
+  position: fixed;
+  inset: 0;
+  background: rgb(0, 0, 0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  animation: fadeOut 1s ease forwards;
+  animation-delay: 3s;
+}
+
+/* LOGO ANIMATION */
+#loader img {
+  width: 70%;
+  max-width: 600px;
+  animation: zoomGlow 2.5s ease-in-out infinite;
+}
+
+/* LOGO ZOOM + GLOW */
+@keyframes zoomGlow {
+  0% {
+    transform: scale(0.9);
+    filter: drop-shadow(0 0 0 red);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 30px red);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.9);
+    filter: drop-shadow(0 0 0 red);
+    opacity: 0.6;
+  }
+}
+
+/* LOADER DISAPPEAR */
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+.fight-summary {
+  cursor: crosshair;
+  position: relative;
+  padding: 40px;
+  color: white;
+  border-radius: 15px;
+  transition: all 0.4s ease;
+  z-index: 1;
+}
+
+.fight-summary::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(6px);
+  border-radius: 15px;
+  opacity: 0;
+  transition: 0.4s ease;
+  z-index: -1;
+}
+
+.fight-summary:hover::before {
+  opacity: 1;
+}
+
+.fight-summary:hover {
+  box-shadow: 0 0 30px red;
+  transform: scale(1.03);
+}
+
+.fight-summary strong {
+  color: red;
+}
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Anton', sans-serif; letter-spacing: 2px; text-transform: uppercase;
+            color: rgba(255, 0, 0, 0.692);
+            background: url('https://images8.alphacoders.com/137/1371330.jpeg') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+        }
+        .overlay {
+            background: rgba(0, 0, 0, 0); 
+            min-height: 100vh;
+        }
+        header {
+            text-align: center;
+            padding: 30px 15px;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0), transparent);
+        }
+        h1 {
+            font-size: 4em;
+            text-shadow: 0 0 10px rgb(0, 0, 0);
+            margin: 0;
+        }
+        nav {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0,0,0,0.8);
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.5em;
+            margin: 0 30px;
+            padding: 10px 20px;
+            border: 2px solid rgba(185, 7, 7, 0.836);
+            transition: 0.3s;
+        }
+        nav a:hover {
+            background: red;
+            color: black;
+        }
+        section {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            text-align: center;
+        }
+        .story {
+            font-size: 1.4em;
+            line-height: 1.8;
+            background: rgba(0,0,0,0.6);
+            padding: 100px;
+            border-radius: 20px;
+            margin-bottom: 50px;
+        }
+        .netflix-btn {
+            display: inline-block;
+            background: rgba(255, 2, 2, 0.349);
+            color: rgb(255, 255, 255);
+            padding: 20px 40px;
+            font-size: 2em;
+            text-decoration: none;
+            border-radius: 10px;
+            margin: 30px;
+            box-shadow: 0 0 20px rgb(0, 0, 0);
+        }
+        .netflix-btn:hover {
+            background: rgb(190, 3, 3);
+        }
+        .characters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        .char-card {
+            background: rgba(0,0,0,0.8);
+            padding: 20px;
+            border: 3px solid red;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+            z-index: 0;
+        }
+        .char-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 15px red;
+}
+        .char-name {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        .char-overview {
+            display: none;
+            font-size: 1.2em;
+            line-height: 1.6;
+        }
+        img {
+            max-width: 100%;
+            border: 4px solid rgba(207, 9, 9, 0);
+            margin-bottom: 20px;
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: black;
+            margin-top: 50px;
+        }
+        /* RED LIGHTNING FLASH */
+@keyframes lightningFlash {
+  0% { background: black; }
+  40% { background: radial-gradient(circle, red 10%, black 70%); }
+  100% { background: black; }
+}
+
+/* LIGHTNING OVERLAY */
+#loader::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("https://i.imgur.com/8KQZ4FJ.png");
+  background-size: cover;
+  opacity: 0;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+#loader.lightning::after {
+  animation: lightningStrike 0.25s ease;
+}
+
+@keyframes lightningStrike {
+  0% { opacity: 0; }
+  40% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* COMBINED IMPACT */
+#loader.impact {
+  animation: lightningFlash 0.15s ease;
+}
+
+    </style>
+</head>
+<body>
+    <div id="loader">
+  <img src="https://occ-0-4345-3647.1.nflxso.net/dnm/api/v6/S4oi7EPZbv2UEPaukW54OORa0S8/AAAABQf0vEZNHq3YNy-NWOX2kVDtwUiczpaEQRogdr6TCUFLYY5F-p9xW91b7DiAECeGtIbxzlUSMGvIMBuUVJzQZuIOQxlA77O5Vg.webp?r=cfe"
+       alt="Baki vs Kengan Loader">
+       <audio id="punchSound" preload="auto">
+  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_1c0b2e7f49.mp3?filename=punch-140236.mp3" type="audio/mpeg">
+</audio>
+</div>
+    <div class="overlay">
+        <header>
+           <h1><img src="https://occ-0-4345-3647.1.nflxso.net/dnm/api/v6/S4oi7EPZbv2UEPaukW54OORa0S8/AAAABQf0vEZNHq3YNy-NWOX2kVDtwUiczpaEQRogdr6TCUFLYY5F-p9xW91b7DiAECeGtIbxzlUSMGvIMBuUVJzQZuIOQxlA77O5Vg.webp?r=cfe" alt="" class="default-ltr-iqcdef-cache-hnabjg e1e4hbe50"style="width:40%; height:auto; object-fit:contain; max-width:40%;"><h1>
+            <p>Netflix Original Crossover - 2024</p>
+        </header>
+        
+        <nav>
+            <a href="#home">Home</a>
+            <a href="#characters">Characters</a>
+            <a href="#Fights">Fights</a>
+        </nav>
+        
+        <section id="home">
+            <div class="story">
+                <h2 style="font-size:3em; text-shadow:0 0 8px rgb(0, 0, 0);">Story</h2>
+                <p style="color:rgb(255, 255, 255);">Underground fighting legends collide! The strongest fighters from the Baki universe and Kengan Ashura's corporate gladiators enter a secret tournament. Epic matchups like Baki Hanma vs Ohma Tokita shake the arena. Pure adrenaline, brutal fights, and no holds barred – who will prove supreme?</p>
+                <p style="color:rgb(255, 255, 255);">Witness dream battles: Hanayama vs Saw Paing, Jack Hammer vs Raian Kure, and the ultimate clash of protagonists!</p>
+                <a href="https://www.netflix.com/in/title/81648184" target="_blank" class="netflix-btn">Watch on Netflix</a>
+            </div>
+        </section>
+        
+        <section id="characters">
+            <h2 style="font-size:3em; text-shadow:0 0 10px rgb(0, 0, 0);">Characters</h2>
+            <div class="characters-grid">
+                <!-- Baki Hanma -->
+                <div class="char-card" onclick="this.querySelector('.char-overview').style.display = this.querySelector('.char-overview').style.display === 'block' ? 'none' : 'block';">
+                    <img src="https://i.pinimg.com/736x/45/53/13/4553133721bceae7ccfef09d79a99750.jpg" alt="Baki Hanma">
+                    <div class="char-name">Baki Hanma</div>
+                    <div class="char-overview" style="color:rgb(255, 255, 255);">Height: ~168 cm (5'6")
+
+Weight: ~76 kg (167 lbs)
+
+Fighting Style: Mixed martial arts + Hanma instinct
+                        Protagonist of Baki series. Son of the "Strongest Creature" Yujiro Hanma. Master of creative martial arts, Demon Back, Cockroach Dash. Insane durability and growth in battles. Seeks to surpass his father.
+                    </div>
+                </div>
+                
+                <!-- Tokita Ohma -->
+                <div class="char-card" onclick="this.querySelector('.char-overview').style.display = this.querySelector('.char-overview').style.display === 'block' ? 'none' : 'block';">
+                    <img src="https://i.pinimg.com/736x/42/ea/06/42ea064ea5a770940a4eb0b7c73395ca.jpg" alt=" Tokita Ohma">
+                    <div class="char-name">Tokita Ohma</div>
+                    <div class="char-overview" style="color:rgb(255, 254, 254);">Height: ~182 cm (6'0")
+
+Weight: ~85 kg (187 lbs)
+
+Fighting Style: Niko Style
+                        Protagonist of Kengan Ashura. Master of Niko Style (Advance & Possessing Spirit). Relentless fighter with redirection techniques. Overcame heart issues, pure technique and adaptability god.
+                    </div>
+                </div>
+                <!-- Kaoru Hanayama -->
+                <div class="char-card" onclick="this.querySelector('.char-overview').style.display = this.querySelector('.char-overview').style.display === 'block' ? 'none' : 'block';">
+                    <img src="https://i.pinimg.com/1200x/c8/e4/2a/c8e42a4db04c4040940c9855296addde.jpg" alt="Kaoru Hanayama">
+                    <div class="char-name">Kaoru Hanayama</div>
+                    <div class="char-overview" style="color:rgb(255, 254, 254);">
+                        Height: ~190 cm (6'3")
+
+Weight: ~166 kg (366 lbs)
+
+Fighting Style: Pure street fighting (no formal martial arts)
+
+Description:
+A legendary yakuza boss with monstrous grip strength. Hanayama relies entirely on raw power and durability rather than technique. His punches feel like being hit by a truck.
+                    </div>
+                </div>
+                <!-- Saw Paing Yoroizuka -->
+                <div class="char-card" onclick="this.querySelector('.char-overview').style.display = this.querySelector('.char-overview').style.display === 'block' ? 'none' : 'block';">
+                    <img src="https://i.pinimg.com/736x/28/53/9d/28539dba00fef5008ab0318ca9bc9201.jpg" alt="Saw Paing Yoroizuka">
+                    <div class="char-name">Saw Paing Yoroizuka</div>
+                    <div class="char-overview"  style="color:rgb(255, 254, 254);">
+                       Height: ~183 cm (6'0")
+
+Weight: ~91 kg (200 lbs)
+
+Fighting Style: Lethwei (Burmese bare-knuckle boxing)
+
+Description:
+Known as the “Howling Fighting Spirit.” Famous for his heavily conditioned skull, Saw Paing uses devastating headbutts and relentless aggression. His pain tolerance is extremely high, allowing him to fight through severe damage.
+                    </div>
+                </div>
+                <!-- Raian Kure -->
+                <div class="char-card" onclick="this.querySelector('.char-overview').style.display = this.querySelector('.char-overview').style.display === 'block' ? 'none' : 'block';">
+                    <img src="https://i.pinimg.com/736x/8d/0b/67/8d0b6782b9a301620937863cc6720ec6.jpg" alt="Raian Kure">
+                    <div class="char-name">Raian Kure</div>
+                    <div class="char-overview"  style="color:rgb(255, 254, 254);">
+                        Height: ~188 cm (6'2")
+
+Weight: ~94 kg (207 lbs)
+
+Fighting Style: Kure Clan assassination techniques + Removal
+
+Description:
+A sadistic and violent fighter. When he activates Removal, Raian releases 100% of his muscle power, dramatically boosting speed, strength, and brutality.
+                    </div>
+                </div>
+             <!-- Jack Hanma(Hammer) -->
+                <div class="char-card" onclick="this.querySelector('.char-overview').style.display = this.querySelector('.char-overview').style.display === 'block' ? 'none' : 'block';">
+                    <img src="https://i.pinimg.com/736x/11/f7/74/11f77428542f45a63bf9beb0c2bd99ac.jpg" alt="Jack Hanma(Hammer)">
+                    <div class="char-name">Jack Hanma</div>
+                    <div class="char-overview"  style="color:rgb(255, 254, 254);">
+                       Height: ~243 cm (8'0")
+
+Weight: ~201 kg (443 lbs)
+
+Fighting Style: Savage brawling and biting
+
+Description:
+A genetically enhanced powerhouse obsessed with becoming stronger. Jack ignores pain and fights like a feral beast, using sheer size, power, and relentless aggression.
+                    </div>
+                </div>   
+                <!-- julius reinhold -->
+                <div class="char-card" onclick="this.querySelector('.char-overview').style.display = this.querySelector('.char-overview').style.display === 'block' ? 'none' : 'block';">
+                    <img src="https://i.pinimg.com/736x/1d/28/17/1d28175f389bbed4b2406b48d6f31032.jpg" alt="julius reinhold">
+                    <div class="char-name">julius reinhold</div>
+                    <div class="char-overview"  style="color:rgb(255, 254, 254);">
+                       Height: ~205 cm (6'9")
+
+Weight: ~210 kg (463 lbs)
+
+Fighting Style: Brute strength and muscle control
+
+Description:
+A walking mass of muscle who believes technique is unnecessary. Julius relies solely on overwhelming physical power and extreme muscle conditioning.
+                    </div>
+                </div>
+                <!-- biscuit oliva -->
+                <div class="char-card" onclick="this.querySelector('.char-overview').style.display = this.querySelector('.char-overview').style.display === 'block' ? 'none' : 'block';">
+                    <img src="https://i.pinimg.com/736x/73/d7/da/73d7da20c8511075303d849da8b3539d.jpg" alt="biscuit oliva">
+                    <div class="char-name">biscuit oliva</div>
+                    <div class="char-overview"  style="color:rgb(255, 254, 254);">
+                      Height: ~180 cm (5'11")
+
+Weight: ~150 kg (331 lbs)
+
+Fighting Style: Muscle-based brawling
+
+Description:
+Known as “Mr. Unchained.” Oliva possesses incredible muscle density, allowing him to tank bullets and overpower opponents with raw strength combined with surprising speed.
+                    </div>
+                </div>
+                 <!-- Gensai Kuroki -->
+                <div class="char-card" onclick="this.querySelector('.char-overview').style.display = this.querySelector('.char-overview').style.display === 'block' ? 'none' : 'block';">
+                    <img src="https://i.pinimg.com/736x/7c/55/3f/7c553f6bbfac2236d8340e91a9a6f98c.jpg" alt="Gensai Kuroki">
+                    <div class="char-name">Gensai Kuroki</div>
+                    <div class="char-overview"  style="color:rgb(255, 254, 254);">
+                       Height: ~185 cm (6'1")
+
+Weight: ~96 kg (212 lbs)
+
+Fighting Style: Kaiwan Style Karate
+
+Description:
+Known as “The Devil Lance.” A master of precision and experience, Kuroki ends fights with perfectly timed, devastating strikes.
+                    </div>
+                </div>
+             <!-- Yujiro Hanma -->
+                <div class="char-card" onclick="this.querySelector('.char-overview').style.display = this.querySelector('.char-overview').style.display === 'block' ? 'none' : 'block';">
+                    <img src="https://i.pinimg.com/736x/40/e4/63/40e46377521df7053344e70fa0aa0bf0.jpg" alt="Yujiro Hanma">
+                    <div class="char-name">Yujiro Hanma☠️</div>
+                    <div class="char-overview"  style="color:rgb(255, 254, 254);">
+                       Height: ~190 cm (6'3")
+
+Weight: ~116 kg (256 lbs)
+
+Fighting Style: Absolute violence
+
+Description:
+The strongest creature on Earth. Yuujirou requires no formal style—his overwhelming strength, speed, and dominance place him far above normal fighters.
+                    </div>
+                </div>
+        </section>
+        <section id="Fights">
+            <h1 style="font-size:3em; text-shadow:0 0 20px rgb(0, 0, 0);text-align:center;font-size:70px;">Fights</h1>
+            <div class="Fights">
+                <!-- Round 1 -->
+                <div class="char-card" onclick="this.querySelector('.char-overview').style.display = this.querySelector('.char-overview').style.display === 'block' ? 'none' : 'block';">
+                    <img src="round 1-Picsart-AiImageEnhancer-Picsart-AiImageEnhancer.png" alt="Baki Hanma"style="width:100%; height:auto; object-fit:contain; max-width:100%;">
+                    <div class="char-name fight-summary" style="text-align: center;">🥊 Round 1<br>
+Saw Paing Yoroizuka vs Kaoru Hanayama<br>
+
+The arena shakes as Saw Paing charges first, his roar echoing like a war drum. A brutal headbutt crashes into Hanayama’s face—CRACK!
+Hanayama doesn’t fall. He smiles.
+
+Hanayama answers with a single punch to the chest. The impact sends Saw Paing skidding backward, coughing blood, yet laughing. Saw Paing launches a barrage of knees, elbows, and skull-smashing headbutts, but Hanayama’s body absorbs everything.
+
+The fight ends when Hanayama grabs Saw Paing’s head mid-charge and crushes him into the ground with raw grip strength.
+
+<strong>Winner: Kaoru Hanayama (High difficulty)</strong>
+                    </div>
+                </div>
+                <div class="Fights">
+                <!-- Round 2 -->
+                <div class="char-card" onclick="this.querySelector('.char-overview').style.display = this.querySelector('.char-overview').style.display === 'block' ? 'none' : 'block';">
+                    <img src="round 2-Picsart-AiImageEnhancer-Picsart-AiImageEnhancer.png" alt="Baki Hanma"style="width:100%; height:auto; object-fit:contain; max-width:100%;">
+                <div class="char-name fight-summary" style="text-align: center;">🥊 Round 2<br>Raian Kure vs Jack Hanma
+<br>
+Jack attacks first, biting, smashing, overwhelming with sheer size. Raian laughs—then activates Removal.
+
+In an instant, Raian vanishes and reappears behind Jack, smashing his spine, ribs, and jaw with assassination-level strikes. Jack refuses to fall, roaring like a monster.
+
+Jack lands a massive uppercut, nearly breaking Raian’s neck. Blood sprays. Raian grins wider.
+
+The fight ends when Raian snaps Jack’s balance, slams him down, and crushes his throat with lethal intent.
+
+<strong>Winner: Raian Kure (Extreme difficulty)</strong>
+                    <div class="char-overview">
+                    </div>
+                </div>
+                <div class="Fights">
+                <!-- Round 3 -->
+                <div class="char-card" onclick="this.querySelector('.char-overview').style.display = this.querySelector('.char-overview').style.display === 'block' ? 'none' : 'block';">
+                    <img src="round 3-Picsart-AiImageEnhancer-Picsart-AiImageEnhancer-Picsart-AiImageEnhancer.png" alt="Baki Hanma"style="width:100%; height:auto; object-fit:contain; max-width:100%;">
+                    <div class="char-name fight-summary" style="text-align: center;">🥊 Round 3<br>Ouma Tokita vs Baki Hanma (Interrupted)<br>
+
+Technique meets evolution.
+
+Ouma’s Niko Style redirects Baki’s attacks flawlessly. Baki adapts instantly, copying movements mid-fight. Speed increases. Pressure rises.
+
+Ouma activates Advance. His heartbeat becomes thunder. Baki responds by unlocking his Hanma instincts.
+
+The clash creates shockwaves. Neither can dominate. As both prepare their finishing moves—
+
+The match is forcibly stopped. The battlefield can’t handle them anymore.
+
+<strong>Result: No Contest (Interrupted)</strong></div>
+                    <div class="char-overview">
+                    </div>
+                </div>
+                <div class="Fights">
+                <!-- Arm wrestling -->
+                <div class="char-card" onclick="this.querySelector('.char-overview').style.display = this.querySelector('.char-overview').style.display === 'block' ? 'none' : 'block';">
+                    <img src="hqdefault-Picsart-AiImageEnhancer-Picsart-AiImageEnhancer.jpg" alt="Baki Hanma"style="width:100%; height:auto; object-fit:contain; max-width:100%;">
+                    <div class="char-name fight-summary" style="text-align: center;">💪 Outside Fight (Interrupted)<br>
+Julius Reinhold vs Biscuit Oliva (Arm Wrestling)<br>
+
+The table bends. Veins explode. Muscles swell beyond human limits.
+Julius pushes with pure mass. Oliva smiles calmly, increasing pressure inch by inch.
+
+The table shatters, the ground cracks, and shockwaves ripple outward—before a winner is decided, officials rush in and stop the match to prevent the building from collapsing.
+
+<strong>Result: No Contest (Interrupted)</strong></div>
+                    <div class="char-overview">
+                    </div>
+                </div>
+                <div class="Fights">
+                <!-- cancelled fight -->
+                <div class="char-card" onclick="this.querySelector('.char-overview').style.display = this.querySelector('.char-overview').style.display === 'block' ? 'none' : 'block';">
+                    <img src="sddefault-Picsart-AiImageEnhancer-Picsart-AiImageEnhancer.jpg" alt="Baki Hanma"style="width:100%; height:auto; object-fit:contain; max-width:100%;">
+                    <div class="char-name fight-summary" style="text-align: center;">❌ Cancelled Fight<br>
+Gensai Kuroki vs Yujiro Hanma<br>
+
+Kuroki stands calm, fingers ready like spears.
+Yujiro smiles.
+
+Before the first strike, Yujiro’s aura alone cracks the ground. Kuroki recognizes it instantly—this is not a fight, this is extinction.
+
+Officials cancel the match immediately.<br>
+
+<strong>Result: Cancelled — Power imbalance too extreme</strong></div>
+                    <div class="char-overview">
+                    </div>
+                </div>
+                </section>
+                
+        <footer>
+            Fan-made site inspired by official Baki anime site | © 2024 Netflix Crossover
+        </footer>
+    </div>
+    
+    <script>
+  window.addEventListener("load", () => {
+    setTimeout(() => {
+      document.getElementById("loader").style.display = "none";
+    }, 3500); // 3.5 seconds
+  });
+   window.addEventListener("load", () => {
+    const loader = document.getElementById("loader");
+
+    // Punch hits (multiple impacts)
+    setTimeout(() => loader.classList.add("punch"), 1200);
+    setTimeout(() => loader.classList.remove("punch"), 1500);
+
+    setTimeout(() => loader.classList.add("punch"), 2000);
+    setTimeout(() => loader.classList.remove("punch"), 2300);
+
+    // Loader remove
+    setTimeout(() => {
+      loader.style.opacity = "0";
+      loader.style.visibility = "hidden";
+    }, 3500);
+  });
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', e => {
+                e.preventDefault();
+                document.querySelector(link.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>
